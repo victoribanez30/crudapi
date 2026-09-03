@@ -3,7 +3,7 @@ const app = express();
 const port = 3000;
 
 app.get('/', (req, res) => {
-  res.json({' "name"': 'TASK API', "version": "1.0", "endpoints": ["/tasks"]});
+  res.json({ "name": 'TASK API', "version": "1.0", "endpoints": ["/tasks"] });
 });
 
 app.get('/health', (req, res) => {
