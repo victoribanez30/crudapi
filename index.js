@@ -35,6 +35,41 @@ app.post('/tasks', (req, res) => {
   res.status(201).json(task);
 });
 
+app.put('/tasks/:id', (req, res) => {
+  const task = tasks.find(t => t.id === parseInt(req.params.id));
+
+  if (!task) {
+    return res.status(404).json({ error: `Task ${req.params.id} not found` });
+  }
+
+  const hasTitle = Object.hasOwn(req.body, 'title');
+  const hasDone = Object.hasOwn(req.body, 'done');
+
+  if (
+    (!hasTitle && !hasDone) ||
+    (hasTitle && (typeof req.body.title !== 'string' || !req.body.title.trim())) ||
+    (hasDone && typeof req.body.done !== 'boolean')
+  ) {
+    return res.status(400).json({ error: 'Provide a valid title and/or done value' });
+  }
+
+  if (hasTitle) task.title = req.body.title;
+  if (hasDone) task.done = req.body.done;
+
+  res.json(task);
+});
+
+app.delete('/tasks/:id', (req, res) => {
+  const taskIndex = tasks.findIndex(t => t.id === parseInt(req.params.id));
+
+  if (taskIndex === -1) {
+    return res.status(404).json({ error: `Task ${req.params.id} not found` });
+  }
+
+  tasks.splice(taskIndex, 1);
+  res.status(204).send();
+});
+
 app.get('/tasks/:id', (req, res) => {
   const task = tasks.find(t => t.id === parseInt(req.params.id));
   if (!task) {
