@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
+app.use(express.json());
+
 let tasks = [
   { id: 1, title: 'Task 1', description: 'This is task 1', done: false },
   { id: 2, title: 'Task 2', description: 'This is task 2', done: true },
@@ -16,6 +18,21 @@ app.get('/', (req, res) => {
 
 app.get('/tasks', (req, res) => {
   res.json(tasks);
+});
+
+app.post('/tasks', (req, res) => {
+  if (typeof req.body.title !== 'string' || !req.body.title.trim()) {
+    return res.status(400).json({ error: 'Title is required' });
+  }
+
+  const task = {
+    id: Math.max(0, ...tasks.map(task => task.id)) + 1,
+    title: req.body.title,
+    done: false
+  };
+
+  tasks.push(task);
+  res.status(201).json(task);
 });
 
 app.get('/tasks/:id', (req, res) => {
